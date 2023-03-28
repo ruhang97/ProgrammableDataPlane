@@ -34,6 +34,7 @@ class P4InfoHelper(object):
             raise AssertionError("name or id must be None")
 
         for o in getattr(self.p4info, entity_type):
+            print("DEBUG: ", entity_type)
             pre = o.preamble
             if name:
                 if (pre.name == name or pre.alias == name):
