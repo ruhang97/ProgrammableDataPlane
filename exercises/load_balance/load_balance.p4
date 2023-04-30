@@ -131,6 +131,16 @@ control MyIngress(inout headers hdr,
         }
         size = 2;
     }
+    table next_hop {
+        key = {
+            hdr.ipv4.dstAddr: exact;
+        }
+        actions = {
+            drop;
+            set_nhop;
+        }
+        size = 10;
+    }
     apply {
         /* TODO: apply ecmp_group table and ecmp_nhop table if IPv4 header is
          * valid and TTL hasn't reached zero

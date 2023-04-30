@@ -113,10 +113,10 @@ control MyIngress(inout headers hdr,
             ecmp_count);
     }
     action set_nhop(bit<48> nhop_dmac, bit<32> nhop_ipv4, bit<9> port) {
-        hdr.ethernet.dstAddr = nhop_dmac;
-        hdr.ipv4.dstAddr = nhop_ipv4;
-        standard_metadata.egress_spec = port;
-        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+        hdr.ethernet.dstAddr = nhop_dmac;   // set next hop mac address
+        hdr.ipv4.dstAddr = nhop_ipv4;       // change destination IP
+        standard_metadata.egress_spec = port;   // set outgoing port
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;    // decrease ttl
     }
     table ecmp_group {
         key = {
