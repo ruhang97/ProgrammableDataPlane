@@ -151,7 +151,7 @@ control MyIngress(inout headers hdr,
 
 
     // TODO: declare a new table: anonForward_exact
-    table anonForward_exact() {
+    table anonForward_exact {
         key = {
             hdr.ipv4.dstAddr: exact;
             hdr.tcp.dstPort: exact;
@@ -185,7 +185,10 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    
+
+     action drop() {
+         mark_to_drop(standard_metadata);
+     }
     // TODO: declare a new action: anonForward_forward()
     action anonForward_set_src(ip4Addr_t ipv4_srcAddr, tcpPort_t tcp_srcPort, egressSpec_t port) {
         standard_metadata.egress_spec = port;
@@ -195,7 +198,7 @@ control MyEgress(inout headers hdr,
 
 
     // TODO: declare a new table: anonForward_exact
-    table anonForward_exact() {
+    table anonForward_exact {
         key = {
             hdr.ipv4.srcAddr: exact;
             hdr.tcp.srcPort: exact;
@@ -207,7 +210,7 @@ control MyEgress(inout headers hdr,
         size = 1024;
         default_action = drop();
     }
-    
+
     apply {
         if (hdr.tcp.isValid()) {
             anonForward_exact.apply();
