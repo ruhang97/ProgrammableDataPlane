@@ -148,12 +148,35 @@ control MyIngress(inout headers hdr,
         hdr.tcp.srcPort = tcp_srcPort;      // change tcp dst address here
     }
 
-
-    // TODO: declare a new table: anonForward_exact
-    table anonForward_exact {
+    table anonForward_exact_s1 {
         key = {
             hdr.ipv4.srcAddr: exact;
             hdr.tcp.srcPort: exact;
+        }
+        actions = {
+            anonForward_set_src;
+            drop;
+        }
+        size = 1024;
+        default_action = drop();
+    }
+
+    // switch 2
+    action anonForward_forward(macAddr_t mac_dstAddr, ip4Addr_t ipv4_dstAddr, tcpPort_t tcp_dstPort, egressSpec_t port) {
+        standard_metadata.egress_spec = port;
+        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = mac_dstAddr;
+        hdr.ipv4.dstAddr = ipv4_dstAddr;    // change ipv4 dst address here
+        hdr.tcp.dstPort = tcp_dstPort;      // change tcp dst address here
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+    }
+
+
+    // TODO: declare a new table: anonForward_exact
+    table anonForward_exact_s2 {
+        key = {
+            hdr.ipv4.dstAddr: exact;
+            hdr.tcp.dstPort: exact;
         }
         actions = {
             anonForward_forward;
@@ -162,8 +185,6 @@ control MyIngress(inout headers hdr,
         size = 1024;
         default_action = drop();
     }
-
-    // TODO: also remember to add table entries!
 
 
     apply {

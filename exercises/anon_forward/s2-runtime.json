@@ -1,7 +1,7 @@
 {
   "target": "bmv2",
-  "p4info": "build/anon_forward_s2.p4.p4info.txt",
-  "bmv2_json": "build/anon_forward_s2.json",
+  "p4info": "build/anon_forward.p4.p4info.txt",
+  "bmv2_json": "build/anon_forward.json",
   "table_entries": [
     {
       "table": "MyIngress.ipv4_lpm",
@@ -36,9 +36,8 @@
         "port": 3
       }
     },
-
     {
-      "table": "MyIngress.anonForward_exact",
+      "table": "MyIngress.anonForward_exact_s2",
       "match": {
         "hdr.ipv4.dstAddr": "10.0.2.20",
         "hdr.tcp.dstPort": 5000
@@ -52,7 +51,7 @@
       }
     },
     {
-      "table": "MyIngress.anonForward_exact",
+      "table": "MyIngress.anonForward_exact_s2",
       "match": {
         "hdr.ipv4.dstAddr": "10.0.2.20",
         "hdr.tcp.dstPort": 5001
