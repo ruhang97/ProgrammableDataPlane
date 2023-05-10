@@ -1,7 +1,7 @@
 {
   "target": "bmv2",
-  "p4info": "build/anon_forward.p4.p4info.txt",
-  "bmv2_json": "build/anon_forward.json",
+  "p4info": "build/anon_forward_s2.p4.p4info.txt",
+  "bmv2_json": "build/anon_forward_s2.json",
   "table_entries": [
     {
       "table": "MyIngress.ipv4_lpm",
@@ -45,7 +45,7 @@
       },
       "action_name": "MyIngress.anonForward_forward",
       "action_params": {
-        "mac_dstAddr": "00:00:00:00:01:02",
+        "mac_dstAddr": "08:00:00:00:01:00",
         "ipv4_dstAddr": "10.0.1.10",
         "tcp_dstPort": 5000,
         "port": 2
@@ -59,7 +59,7 @@
       },
       "action_name": "MyIngress.anonForward_forward",
       "action_params": {
-        "mac_dstAddr": "00:00:00:00:01:02",
+        "mac_dstAddr": "08:00:00:00:01:00",
         "ipv4_dstAddr": "10.0.1.11",
         "tcp_dstPort": 5000,
         "port": 2

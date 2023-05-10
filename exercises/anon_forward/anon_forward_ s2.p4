@@ -189,7 +189,7 @@ control MyEgress(inout headers hdr,
      action drop() {
          mark_to_drop(standard_metadata);
      }
-    // TODO: declare a new action: anonForward_forward()
+    // Behavior on S1 switch
     action anonForward_set_src(ip4Addr_t ipv4_srcAddr, tcpPort_t tcp_srcPort, egressSpec_t port) {
         standard_metadata.egress_spec = port;
         hdr.ipv4.srcAddr = ipv4_srcAddr;    // change ipv4 dst address here

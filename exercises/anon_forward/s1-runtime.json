@@ -1,7 +1,7 @@
 {
   "target": "bmv2",
-  "p4info": "build/anon_forward.p4.p4info.txt",
-  "bmv2_json": "build/anon_forward.json",
+  "p4info": "build/anon_forward_s1.p4.p4info.txt",
+  "bmv2_json": "build/anon_forward_s1.json",
   "table_entries": [
     {
       "table": "MyIngress.ipv4_lpm",
@@ -37,28 +37,30 @@
       }
     },
     {
-      "table": "MyEgress.anonForward_exact",
+      "table": "MyIngress.anonForward_exact",
       "match": {
         "hdr.ipv4.srcAddr": "10.0.1.10",
         "hdr.tcp.srcPort": 5000
       },
-      "action_name": "MyEgress.anonForward_set_src",
+      "action_name": "MyIngress.anonForward_set_src",
       "action_params": {
+        "mac_dstAddr": "08:00:00:00:03:00",
         "ipv4_srcAddr": "10.0.2.20",
         "tcp_srcPort": 5000,
-        "port": 2
+        "port": 3
       }
     },
-      {"table": "MyEgress.anonForward_exact",
+      {"table": "MyIngress.anonForward_exact",
       "match": {
         "hdr.ipv4.srcAddr": "10.0.1.11",
         "hdr.tcp.srcPort": 5000
       },
-      "action_name": "MyEgress.anonForward_set_src",
+      "action_name": "MyIngress.anonForward_set_src",
       "action_params": {
+        "mac_dstAddr": "08:00:00:00:03:00",
         "ipv4_srcAddr": "10.0.2.20",
         "tcp_srcPort": 5001,
-        "port": 2
+        "port": 3
       }
     }
   ]
