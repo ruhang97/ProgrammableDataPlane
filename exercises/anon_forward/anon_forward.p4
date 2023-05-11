@@ -133,7 +133,7 @@ control MyIngress(inout headers hdr,
             }
         } else if (anon == 2 && hdr.tcp.isValid()) {
             if (hdr.tcp.dstPort == 5000) {
-              standard_metadata.egress_spec = 1;
+              standard_metadata.egress_spec = 2;
               hdr.ethernet.dstAddr = 0x080000000100;
               hdr.ipv4.dstAddr = H1_IP_ADDRESS;
             }

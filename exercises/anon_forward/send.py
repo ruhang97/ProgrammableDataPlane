@@ -23,23 +23,23 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('ip_addr', type=str, help="The destination IP address to use")
     parser.add_argument('message', type=str, help="The message to include in packet")
-    parser.add_argument('--anon', type=int, default=None, help='Specify any integer to activate anon forward, if unspecified then packets will be forwarded with normal behavior.')
+    parser.add_argument('--anon', type=int, default=0, help='Specify any integer to activate anon forward, if unspecified then packets will be forwarded with normal behavior.')
     args = parser.parse_args()
 
     addr = socket.gethostbyname(args.ip_addr)
     anon = args.anon
     iface = get_if()
 
-    if (anon == "1"):
-        print("sending with anonymity {}".format(iface))
+    if (anon == 1):
+        print("sending with anonymity 1 {}".format(iface))
         pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
         pkt = pkt / IP(dst=addr) / TCP(dport=1234, sport=5000) / args.message
-    elif (anon == "3"):
-        print("sending with anonymity {}".format(iface))
+    elif (anon == 3):
+        print("sending with anonymity 3 {}".format(iface))
         pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
         pkt = pkt / IP(dst=addr) / TCP(dport=5000, sport=1234) / args.message
     else:
-        print("sending with anonymity {}".format(iface))
+        print("sending without anonymity {}".format(iface))
         pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
         pkt = pkt / IP(dst=addr) / TCP(dport=1234, sport=random.randint(49152,65535)) / args.message
 
