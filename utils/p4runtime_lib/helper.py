@@ -95,6 +95,7 @@ class P4InfoHelper(object):
 
     def get_match_field_pb(self, table_name, match_field_name, value):
         p4info_match = self.get_match_field(table_name, match_field_name)
+        print("self DEBUG: ", p4info_match)
         bitwidth = p4info_match.bitwidth
         p4runtime_match = p4runtime_pb2.FieldMatch()
         p4runtime_match.field_id = p4info_match.id
