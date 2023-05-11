@@ -15,6 +15,9 @@ typedef bit<9>  egressSpec_t;
 typedef bit<48> macAddr_t;
 typedef bit<32> ip4Addr_t;
 typedef bit<16> tcpPort_t;
+typedef bit<2>  anon_t;
+#define H2_IP_ADDRESS 0x0A000202 // 10.0.2.2
+#define H1_IP_ADDRESS 0x0A000101 // 10.0.1.1
 
 header ethernet_t {
     macAddr_t dstAddr;
@@ -119,11 +122,22 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
-    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port, anon_t anon) {
         standard_metadata.egress_spec = port;
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;
         hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+        if (anon == 1 && hdr.tcp.isValid()) {
+            if (hdr.tcp.srcPort == 5000) {
+              hdr.ipv4.srcAddr = H2_IP_ADDRESS;    // change ipv4 src to h2
+            }
+        } else if (anon == 2 && hdr.tcp.isValid()) {
+            if (hdr.tcp.dstPort == 5000) {
+              standard_metadata.egress_spec = 1;
+              hdr.ethernet.dstAddr = 0x080000000100;
+              hdr.ipv4.dstAddr = H1_IP_ADDRESS;
+            }
+        }
     }
 
     table ipv4_lpm {
@@ -140,29 +154,39 @@ control MyIngress(inout headers hdr,
     }
 
     // Change the srcAddr of h1
+    /*
     action anonForward_set_src(macAddr_t mac_dstAddr, ip4Addr_t ipv4_srcAddr, tcpPort_t tcp_srcPort, egressSpec_t port) {
-        standard_metadata.egress_spec = port;
-        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = mac_dstAddr;
-        hdr.ipv4.srcAddr = ipv4_srcAddr;    // change ipv4 dst address here
-        hdr.tcp.srcPort = tcp_srcPort;      // change tcp dst address here
+       standard_metadata.egress_spec = port;
+       hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+       hdr.ethernet.dstAddr = mac_dstAddr;
+       hdr.ipv4.srcAddr = ipv4_srcAddr;    // change ipv4 dst address here
+       hdr.tcp.srcPort = tcp_srcPort;      // change tcp dst address here
+       hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
     }
 
-    table anonForward_exact_s1 {
+
+    action anonForward_set_src(macAddr_t dstAddr, egressSpec_t port) {
+        standard_metadata.egress_spec = port;
+        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = dstAddr;
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+    }
+
+    table anonForward_s1 {
         key = {
-            hdr.ipv4.srcAddr: exact;
-            hdr.tcp.srcPort: exact;
+            hdr.ipv4.dstAddr: lpm;
         }
         actions = {
             anonForward_set_src;
             drop;
+            NoAction;
         }
         size = 1024;
         default_action = drop();
-    }
+    } */
 
     // switch 2
-    action anonForward_forward(macAddr_t mac_dstAddr, ip4Addr_t ipv4_dstAddr, tcpPort_t tcp_dstPort, egressSpec_t port) {
+    /*action anonForward_forward(macAddr_t mac_dstAddr, ip4Addr_t ipv4_dstAddr, tcpPort_t tcp_dstPort, egressSpec_t port) {
         standard_metadata.egress_spec = port;
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = mac_dstAddr;
@@ -184,16 +208,18 @@ control MyIngress(inout headers hdr,
         }
         size = 1024;
         default_action = drop();
-    }
+    }*/
 
 
     apply {
         // TODO: Update control flow: done
-        if (hdr.ipv4.isValid() && !hdr.tcp.isValid()) {
+        if (hdr.ipv4.isValid()) {
             ipv4_lpm.apply();
+            // anonForward_s1.apply();
         }
         if (hdr.tcp.isValid()) {
-            anonForward_exact.apply();
+            // anonForward_exact_s1.apply();
+            //anonForward_exact_s2.apply();
         }
     }
 }
@@ -205,37 +231,7 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-
-    //  action drop() {
-    //      mark_to_drop(standard_metadata);
-    //  }
-    // // Behavior on S1 switch
-    // action anonForward_set_src(ip4Addr_t ipv4_srcAddr, tcpPort_t tcp_srcPort, egressSpec_t port) {
-    //     standard_metadata.egress_spec = port;
-    //     hdr.ipv4.srcAddr = ipv4_srcAddr;    // change ipv4 dst address here
-    //     hdr.tcp.srcPort = tcp_srcPort;
-    // }
-
-
-    // // TODO: declare a new table: anonForward_exact
-    // table anonForward_exact {
-    //     key = {
-    //         hdr.ipv4.srcAddr: exact;
-    //         hdr.tcp.srcPort: exact;
-    //     }
-    //     actions = {
-    //         anonForward_set_src;
-    //         drop;
-    //     }
-    //     size = 1024;
-    //     default_action = drop();
-    // }
-
-    apply {
-        // if (hdr.tcp.isValid()) {
-        //     anonForward_exact.apply();
-        // }
-    }
+    apply { }
 }
 
 /*************************************************************************

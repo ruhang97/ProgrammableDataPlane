@@ -30,10 +30,14 @@ def main():
     anon = args.anon
     iface = get_if()
 
-    if (anon is not None):
+    if (anon == "1"):
         print("sending with anonymity {}".format(iface))
         pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
         pkt = pkt / IP(dst=addr) / TCP(dport=1234, sport=5000) / args.message
+    elif (anon == "3"):
+        print("sending with anonymity {}".format(iface))
+        pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')
+        pkt = pkt / IP(dst=addr) / TCP(dport=5000, sport=1234) / args.message
     else:
         print("sending with anonymity {}".format(iface))
         pkt =  Ether(src=get_if_hwaddr(iface), dst='ff:ff:ff:ff:ff:ff')

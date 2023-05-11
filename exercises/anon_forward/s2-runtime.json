@@ -39,13 +39,13 @@
     {
       "table": "MyIngress.anonForward_exact_s2",
       "match": {
-        "hdr.ipv4.dstAddr": "10.0.2.20",
+        "hdr.ipv4.dstAddr": "10.0.2.2",
         "hdr.tcp.dstPort": 5000
       },
       "action_name": "MyIngress.anonForward_forward",
       "action_params": {
         "mac_dstAddr": "08:00:00:00:01:00",
-        "ipv4_dstAddr": "10.0.1.10",
+        "ipv4_dstAddr": "10.0.1.1",
         "tcp_dstPort": 5000,
         "port": 2
       }
@@ -53,13 +53,13 @@
     {
       "table": "MyIngress.anonForward_exact_s2",
       "match": {
-        "hdr.ipv4.dstAddr": "10.0.2.20",
+        "hdr.ipv4.dstAddr": "10.0.2.2",
         "hdr.tcp.dstPort": 5001
       },
       "action_name": "MyIngress.anonForward_forward",
       "action_params": {
         "mac_dstAddr": "08:00:00:00:01:00",
-        "ipv4_dstAddr": "10.0.1.11",
+        "ipv4_dstAddr": "10.0.1.1",
         "tcp_dstPort": 5000,
         "port": 2
       }
